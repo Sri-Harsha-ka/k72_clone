@@ -3,13 +3,12 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/all'
 
+gsap.registerPlugin(ScrollTrigger)
 
 const Agency = () => {
 
 	const imageDivRef = useRef(null)
-	const imageRef1 = useRef(null)
-	const imageRef2 = useRef(null)
-	gsap.registerPlugin(ScrollTrigger)
+	const imageRef = useRef(null)
 
 	const images = [
 		"https://k72.ca/images/teamMembers/Carl_480x640.jpg?w=480&h=640&fit=crop&s=f0a84706bc91a6f505e8ad35f520f0b7",
@@ -24,52 +23,32 @@ const Agency = () => {
 
 	useGSAP(() => {
 
-		images.forEach(src => {
-			const img = new Image()
-			img.src = src
-		})
-
-		let currentIndex = 0;
-		let activeImg = imageRef1
-		let nextImg = imageRef2
-		let imageIndex = 0;
-
 		gsap.to(imageDivRef.current, {
+			y:800,
+			duration:5,
+			ease:'power1.inOut',
 			scrollTrigger: {
 				trigger: imageDivRef.current,
 				start: "top 25%",
 				end: "top -60%",
 				markers: true,
 				scrub: 0.5,
-				pin: true,
+				// pin: true,
+				// pinSpacing: true,
+				// anticipatePin: 1,
 				onUpdate: (e) => {
-					imageIndex = Math.min(images.length - 1, Math.floor(e.progress * images.length));
+					
+					const imageIndex = Math.min(images.length - 1, Math.floor(e.progress * images.length));
+					console.log(imageDivRef);
+					
 
-					if (imageIndex != currentIndex) {
-
-						nextImg.current.src = images[imageIndex]
-
-						gsap.to(nextImg.current, {
-							opacity: 1,
-							duration: 0.35,
-							ease: "power2.out"
-						})
-
-						gsap.to(activeImg.current, {
-							opacity: 0,
-							duration: 0.35,
-							ease: "power2.out"
-						})
-
-						[activeImg, nextImg] = [nextImg, activeImg]
-						currentIndex = imageIndex
-
-					}
+					imageRef.current.src = images[imageIndex];
 
 				}
 
 			}
 		})
+
 	})
 
 
@@ -78,8 +57,7 @@ const Agency = () => {
 		<div>
 			<div className='section1 bg-zinc-900'>
 				<div ref={imageDivRef} className='absolute overflow-hidden bg-zinc-800 h-96 w-72 rounded-2xl top-80 left-[30vw] '>
-					<img ref={imageRef1} className='absolute' src={images[0]} alt="" />
-					<img ref={imageRef2} className='absolute opacity-0' alt="" />
+					<img ref={imageRef} src={images[0]} alt="" />
 				</div>
 				<div className='relative'>
 					<div className='text-center uppercase pt-[50vh] leading-[17vw] font-[font2] text-[19.5vw] tracking-wide'>
